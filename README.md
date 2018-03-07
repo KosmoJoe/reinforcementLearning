@@ -23,6 +23,13 @@ Using this abstract definition of an agent, I implemented the four most common (
 
 
 ## Testing the Agents
+In order to test the implemented agents, the openAI gym environments are used. In particular, a discreet environment, the FrozenLake, and a continous environment, the cartpole, are used.
 
-1. FrozenLake environment using the Q-tabular agent: 
-   * Average Reward after 100 Episodes: 0.562
+1. FrozenLake environment 
+   1. using the Q-tabular agent. Average Reward after 100 Episodes: 0.655
+     ![Learning Curves](/img/frozenLake_Qtab.png)
+   1. using neural network. Average Reward after 100 Episodes: 0.484
+     ![Learning Curves](/img/frozenLake_QNN.png)
+     
+2. Cartpole environment
+   1. 
