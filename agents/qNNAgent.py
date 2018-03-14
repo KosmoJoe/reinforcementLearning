@@ -27,6 +27,7 @@ class QNNAgent(Agent):
         self.epsi = self.params[3]   # Epsilon for greedy picking
         self.epsi_decay = self.params[4]
         self.epsi_min = 0.001
+        self._timeTot = 200
         #define TF graph
         tf.reset_default_graph()
         #graph1 = tf.Graph()
@@ -49,6 +50,7 @@ class QNNAgent(Agent):
         #self.Qout = tf.matmul(self.inputs1,self.W)
         self.predict = tf.argmax(self.Qout,1)
         
+        self.time = 0
         self.currEpisode = 0 # Current training stage epsiode
         self.currQs = None # Current prediction for the Q values using current observation
 
@@ -64,6 +66,7 @@ class QNNAgent(Agent):
         self.session.run(init)
 
     def _act(self, observation):
+        self.time += 1
         if self.discreet:
             observation = self.transformObservation(observation)
         #Choose an action by greedily (with e chance of random action) from the Q-network
@@ -82,7 +85,10 @@ class QNNAgent(Agent):
             observation = self.transformObservation(observation)
             newObservation = self.transformObservation(newObservation)
         # Penalize endings
-        reward = reward if not done else -10
+        if done:
+            if self.time + 1 < self._timeTot:
+                reward = -500.0  # Penalize bad endings
+            self.time = 0
         
         #if done:
         #     print("episode: {}/{}, score: {}, e: {:.2}".format(self.currEpisode, self.episode_count, reward, self.currEpsi))
@@ -100,4 +106,4 @@ class QNNAgent(Agent):
 if __name__ == '__main__':
     import gym
     envCont = gym.make('CartPole-v0')
-    agent = QNNAgent(envCont.action_space,envCont.observation_space, [1000, 0.9, 0.8, 0.1])
+    agent = QNNAgent(envCont.action_space,envCont.observation_space, [1000, 0.9, 0.8, 0.1,0.001])
